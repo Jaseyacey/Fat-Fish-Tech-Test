@@ -1,6 +1,6 @@
 import { Todo } from '../types/todo';
 
-const API_URL = 'https://your-api-url.com/todos';
+const API_URL = `${process.env.API_URL}`;
 
 export const fetchTodos = async (): Promise<Todo[]> => {
   const response = await fetch(API_URL);
