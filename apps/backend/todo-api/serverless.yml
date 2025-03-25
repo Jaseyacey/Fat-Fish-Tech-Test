@@ -1,0 +1,41 @@
+# "org" ensures this Service is used with the correct Serverless Framework Access Key.
+org: fatfishdigitaltask
+# "app" enables Serverless Framework Dashboard features and sharing them with other Services.
+app: todoappfatfish
+service: todo-api
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  region: eu-west-1 
+  stage: dev
+
+functions:
+  createTodo:
+    handler: handler.createTodo
+    events:
+      - http:
+          path: todos
+          method: post
+
+  getTodos:
+    handler: handler.getTodos
+    events:
+      - http:
+          path: todos
+          method: get
+
+  updateTodo:
+    handler: handler.updateTodo
+    events:
+      - http:
+          path: todos/{id}
+          method: put
+
+  deleteTodo:
+    handler: handler.deleteTodo
+    events:
+      - http:
+          path: todos/{id}
+          method: delete
+
