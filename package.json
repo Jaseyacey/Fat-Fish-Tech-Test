@@ -1,0 +1,24 @@
+{
+  "name": "fat-fish-tech-test",
+  "version": "1.0.0",
+  "description": "A Full Stack tech test for Fat Fish Digital Agency",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jaseyacey/Fat-Fish-Tech-Test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Jaseyacey/Fat-Fish-Tech-Test/issues"
+  },
+  "homepage": "https://github.com/Jaseyacey/Fat-Fish-Tech-Test#readme",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ]
+}
