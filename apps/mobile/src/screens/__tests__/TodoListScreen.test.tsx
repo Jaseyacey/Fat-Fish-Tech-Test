@@ -1,8 +1,15 @@
 import React from 'react';
-import { render, waitFor } from '@testing-library/react-native';
+import { render, waitFor, fireEvent } from '@testing-library/react-native';
 import TodoListScreen from '../TodoListScreen';
 import * as useTodosHook from '../../hooks/useTodos';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../../types/navigation';
+
+const mockNavigation = {
+  navigate: jest.fn(),
+  goBack: jest.fn(),
+} as unknown as NativeStackNavigationProp<RootStackParamList, 'TodoList'>;
 
 const renderWithQueryClient = (ui: React.ReactElement) => {
   const queryClient = new QueryClient();
@@ -23,7 +30,7 @@ describe('TodoListScreen', () => {
       refetch: jest.fn(),
     } as any);
 
-    const { getByText } = renderWithQueryClient(<TodoListScreen />);
+    const { getByText } = renderWithQueryClient(<TodoListScreen navigation={mockNavigation} />);
     expect(getByText('Loading todos...')).toBeTruthy();
   });
 
@@ -36,7 +43,7 @@ describe('TodoListScreen', () => {
       refetch: jest.fn(),
     } as any);
 
-    const { getByText } = renderWithQueryClient(<TodoListScreen />);
+    const { getByText } = renderWithQueryClient(<TodoListScreen navigation={mockNavigation} />);
     expect(getByText(/something went wrong/i)).toBeTruthy();
   });
 
@@ -54,10 +61,27 @@ describe('TodoListScreen', () => {
       refetch: jest.fn(),
     } as any);
 
-    const { getByText } = renderWithQueryClient(<TodoListScreen />);
+    const { getByText } = renderWithQueryClient(<TodoListScreen navigation={mockNavigation} />);
     await waitFor(() => {
       expect(getByText('Test Todo')).toBeTruthy();
       expect(getByText('Another Todo')).toBeTruthy();
     });
   });
+
+  it('navigates to AddTodo screen', async () => {
+    jest.spyOn(useTodosHook, 'useTodos').mockReturnValue({
+      isLoading: false,
+      isError: false,
+      data: [{ id: '1', title: 'Test Todo', completed: false }],
+      error: null,
+      refetch: jest.fn(),
+    } as any);
+    const { getByText } = renderWithQueryClient(
+      <TodoListScreen navigation={mockNavigation} />
+    );
+    const fabButton = getByText('+');
+    fireEvent.press(fabButton);
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('AddTodo');
+  });
+  
 });
