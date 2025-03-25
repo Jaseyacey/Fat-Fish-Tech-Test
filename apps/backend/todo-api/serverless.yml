@@ -7,8 +7,15 @@ service: todo-api
 provider:
   name: aws
   runtime: nodejs16.x
-  region: eu-west-1 
+  region: eu-north-1
   stage: dev
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:PutItem
+        - dynamodb:GetItem
+        - dynamodb:Scan
+      Resource: arn:aws:dynamodb:eu-north-1:372075447360:table/Todos
 
 functions:
   createTodo:
