@@ -1,4 +1,3 @@
-import { beforeEach } from '@jest/globals';
 import fetchMock from 'jest-fetch-mock';
 
 fetchMock.enableMocks();
@@ -6,3 +5,4 @@ fetchMock.enableMocks();
 beforeEach(() => {
   fetchMock.resetMocks();
 });
+global.setImmediate = global.setImmediate || ((fn: () => void) => setTimeout(fn, 0));
