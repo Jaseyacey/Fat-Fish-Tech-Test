@@ -89,3 +89,44 @@ module.exports.deleteTodo = async (event) => {
     };
   }
 };
+
+
+// Update Todo
+module.exports.updateTodo = async (event) => {
+  const todoId = event.pathParameters.id;
+  const todo = JSON.parse(event.body);
+
+  console.log('Updating todo with ID:', todoId);
+
+  try {
+    await dynamoDB
+      .update({
+        TableName: 'Todos',
+        Key: { id: todoId },
+        UpdateExpression: 'set title = :title, completed = :completed',
+        ExpressionAttributeValues: {
+          ':title': todo.title,
+          ':completed': todo.completed,
+        },
+        ReturnValues: 'UPDATED_NEW',
+      })
+      .promise();
+
+    console.log('Todo updated successfully:', todoId);
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: 'Todo updated successfully!',
+      }),
+    };
+  } catch (error) {
+    console.error('Error updating todo:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Internal Server Error',
+        error: error.message,
+      }),
+    };
+  }
+}

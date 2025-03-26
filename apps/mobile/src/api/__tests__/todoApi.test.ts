@@ -37,6 +37,13 @@ import {
       const result = await updateTodo(updated);
       expect(result).toEqual(updated);
     });
-    it.todo('deletes a todo');
+
+    it('deletes a todo', async () => {
+      const id = '1';
+
+      fetchMock.mockResponseOnce(JSON.stringify({deleteTodo: {id}}));
+      const result = await deleteTodo(id);
+      expect(result).toEqual(undefined);
   });
+});
   

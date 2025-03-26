@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Button } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Button, Alert } from 'react-native';
 import { useTodos } from '../hooks/useTodos';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
@@ -10,17 +10,30 @@ type TodoListScreenProps = {
 };
 
 const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
-  const { data: todos, isLoading, isError, deleteTodo } = useTodos();
+  const { data: todos, isLoading, isError, deleteTodo, updateTodo } = useTodos();
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     const currentTodos = (todos || []).filter(todo => todo.id !== id);
     queryClient.setQueryData(['todos'], currentTodos);
-  
     try {
-      await deleteTodo(id);
+      deleteTodo(id); 
     } catch (error) {
       console.error('Failed to delete todo', error);
-      queryClient.setQueryData(['todos'], todos);
+    }
+  };
+
+  const handleToggleComplete = (id: string, currentStatus: boolean) => {
+    const updatedTodos = todos?.map(todo =>
+      todo.id === id ? { ...todo, completed: !currentStatus } : todo
+    );
+    queryClient.setQueryData(['todos'], updatedTodos);
+    try {
+      const todoToUpdate = todos?.find(todo => todo.id === id);
+      if (todoToUpdate) {
+        updateTodo({ ...todoToUpdate, completed: !currentStatus });
+      }
+    } catch (error) {
+      console.error('Failed to update todo status', error);
     }
   };
 
@@ -55,13 +68,28 @@ const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
               backgroundColor: '#f4f4f4',
               marginBottom: 8,
               borderRadius: 8,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
-            <TouchableOpacity onPress={() => handleDelete(item.id)}>
-              <Text style={{ fontSize: 16 }}>{item.title}</Text>
+            <TouchableOpacity onPress={() => handleToggleComplete(item.id, item.completed)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: 16, marginRight: 10 }}>{item.title}</Text>
               <Text style={{ color: item.completed ? 'green' : 'red' }}>
-                {item.completed ? 'Done' : 'Not done'}
+                {item.completed ? 'Done' : 'Mark as done'}
               </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => Alert.alert('Delete todo', 'Are you sure you want to delete this todo?', [
+              {
+                text: 'Cancel',
+                onPress: () => console.log('Cancel Pressed'),
+                style: 'cancel'
+              },
+              { text: 'OK', onPress: () => handleDelete(item.id
+              ) }
+            ]
+            )}>
+              <Text style={{ fontSize: 24, color: 'red' }}>🗑️</Text>
             </TouchableOpacity>
           </View>
         )}
