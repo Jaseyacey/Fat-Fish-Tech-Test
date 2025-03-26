@@ -10,17 +10,32 @@ type TodoListScreenProps = {
 };
 
 const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
-  const { data: todos, isLoading, isError, deleteTodo } = useTodos();
+  const { data: todos, isLoading, isError, deleteTodo, updateTodo } = useTodos();
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => {
     const currentTodos = (todos || []).filter(todo => todo.id !== id);
     queryClient.setQueryData(['todos'], currentTodos);
-  
     try {
-      await deleteTodo(id);
+      deleteTodo(id); 
     } catch (error) {
       console.error('Failed to delete todo', error);
-      queryClient.setQueryData(['todos'], todos);
+    }
+  };
+
+  const handleToggleComplete = (id: string, currentStatus: boolean) => {
+    const updatedTodos = todos?.map(todo =>
+      todo.id === id ? { ...todo, completed: !currentStatus } : todo
+    );
+
+    queryClient.setQueryData(['todos'], updatedTodos);
+
+    try {
+      const currentTodo = todos?.find(todo => todo.id === id);
+      if (currentTodo) {
+        updateTodo({ ...currentTodo, completed: !currentStatus });
+      }
+    } catch (error) {
+      console.error('Failed to update todo status', error);
     }
   };
 
@@ -55,13 +70,20 @@ const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
               backgroundColor: '#f4f4f4',
               marginBottom: 8,
               borderRadius: 8,
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
             }}
           >
-            <TouchableOpacity onPress={() => handleDelete(item.id)}>
-              <Text style={{ fontSize: 16 }}>{item.title}</Text>
+            <TouchableOpacity onPress={() => handleToggleComplete(item.id, item.completed)} style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={{ fontSize: 16, marginRight: 10 }}>{item.title}</Text>
               <Text style={{ color: item.completed ? 'green' : 'red' }}>
                 {item.completed ? 'Done' : 'Not done'}
               </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity testID='DeleteItemButton' onPress={() => handleDelete(item.id)}>
+              <Text style={{ fontSize: 24, color: 'red' }}>🗑️</Text>
             </TouchableOpacity>
           </View>
         )}

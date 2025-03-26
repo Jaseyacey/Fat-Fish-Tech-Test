@@ -37,6 +37,16 @@ import {
       const result = await updateTodo(updated);
       expect(result).toEqual(updated);
     });
-    it.todo('deletes a todo');
+    
+    it('deletes a todo', async () => {
+      const id = '1';
+  
+      fetchMock.mockResponseOnce(JSON.stringify({}));
+  
+      await deleteTodo(id);
+      expect(fetchMock).toHaveBeenCalledWith(`${API_URL_ENDPOINT}/${id}`, {
+        method: 'DELETE',
+      });
+    });
   });
   

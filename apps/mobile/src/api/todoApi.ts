@@ -2,7 +2,7 @@ import { Todo } from '../types/todo';
 import { API_URL_ENDPOINT } from '@env';
 
 const apiUrl = API_URL_ENDPOINT;
-
+// console.log('apiUrl' );
 export const fetchTodos = async (): Promise<Todo[]> => {
   const response = await fetch(apiUrl);
   if (!response.ok) throw new Error('Failed to fetch todos');
@@ -26,6 +26,7 @@ export const updateTodo = async (updatedTodo: Todo): Promise<Todo> => {
     body: JSON.stringify(updatedTodo),
   });
   if (!response.ok) throw new Error('Failed to update todo');
+  console.log('updatedTodo', updatedTodo);
   return response.json();
 };
 
