@@ -14,6 +14,9 @@ provider:
       Action:
         - dynamodb:PutItem
         - dynamodb:GetItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:Query
         - dynamodb:Scan
       Resource: arn:aws:dynamodb:eu-north-1:372075447360:table/Todos
 
@@ -45,4 +48,5 @@ functions:
       - http:
           path: todos/{id}
           method: delete
+          cors: true
 

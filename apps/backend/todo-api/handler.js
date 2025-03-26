@@ -57,3 +57,35 @@ module.exports.getTodos = async () => {
     };
   }
 };
+
+//Delete Todo
+module.exports.deleteTodo = async (event) => {
+  const todoId = event.pathParameters.id;
+  console.log('Deleting todo with ID:', todoId);
+
+  try {
+    await dynamoDB
+      .delete({
+        TableName: 'Todos',
+        Key: { id: todoId },
+      })
+      .promise();
+
+    console.log('Todo deleted successfully:', todoId);
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: 'Todo deleted successfully!',
+      }),
+    };
+  } catch (error) {
+    console.error('Error deleting todo:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Internal Server Error',
+        error: error.message,
+      }),
+    };
+  }
+};
