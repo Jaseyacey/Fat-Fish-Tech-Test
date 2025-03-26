@@ -5,29 +5,20 @@ const dynamoDB = new AWS.DynamoDB.DocumentClient();
 module.exports.createTodo = async (event) => {
   try {
     const todo = JSON.parse(event.body);
-    console.log("Creating todo:", todo);
-
-    if (!todo.title || typeof todo.title !== 'string') {
-      console.error('Invalid todo title:', todo.title);
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ message: 'Title is required and must be a string' }),
-      };
-    }
-
+    // Define newTodo with an id
     const newTodo = {
       id: Date.now().toString(),
       title: todo.title,
       completed: todo.completed || false,
     };
 
-    // Log before inserting into DynamoDB
-    console.log("Inserting into DynamoDB:", newTodo);
-
+    // DynamoDB insertion
     await dynamoDB.put({
       TableName: 'Todos',
       Item: newTodo,
     }).promise();
+    
+    console.log("Todo inserted:", newTodo);
 
     return {
       statusCode: 201,
@@ -37,7 +28,7 @@ module.exports.createTodo = async (event) => {
       }),
     };
   } catch (error) {
-    console.error('Error creating todo:', error);  // Detailed error log
+    console.error('Error creating todo🍎🍎:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: 'Internal Server Error', error: error.message }),
