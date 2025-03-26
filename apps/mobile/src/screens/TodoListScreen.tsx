@@ -3,13 +3,26 @@ import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, 
 import { useTodos } from '../hooks/useTodos';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { queryClient } from '../api/queryClient';
 
 type TodoListScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'TodoList'>;
 };
 
 const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
-  const { data: todos, isLoading, isError } = useTodos();
+  const { data: todos, isLoading, isError, deleteTodo } = useTodos();
+
+  const handleDelete = async (id: string) => {
+    const currentTodos = (todos || []).filter(todo => todo.id !== id);
+    queryClient.setQueryData(['todos'], currentTodos);
+  
+    try {
+      await deleteTodo(id);
+    } catch (error) {
+      console.error('Failed to delete todo', error);
+      queryClient.setQueryData(['todos'], todos);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -44,10 +57,12 @@ const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
               borderRadius: 8,
             }}
           >
-            <Text style={{ fontSize: 16 }}>{item.title}</Text>
-            <Text style={{ color: item.completed ? 'green' : 'red' }}>
-              {item.completed ? 'Done' : 'Not done'}
-            </Text>
+            <TouchableOpacity onPress={() => handleDelete(item.id)}>
+              <Text style={{ fontSize: 16 }}>{item.title}</Text>
+              <Text style={{ color: item.completed ? 'green' : 'red' }}>
+                {item.completed ? 'Done' : 'Not done'}
+              </Text>
+            </TouchableOpacity>
           </View>
         )}
       />

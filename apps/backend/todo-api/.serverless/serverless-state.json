@@ -15,6 +15,9 @@
           "Action": [
             "dynamodb:PutItem",
             "dynamodb:GetItem",
+            "dynamodb:UpdateItem",
+            "dynamodb:DeleteItem",
+            "dynamodb:Query",
             "dynamodb:Scan"
           ],
           "Resource": "arn:aws:dynamodb:eu-north-1:372075447360:table/Todos"
@@ -135,7 +138,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-eu-north-1-fa2e648b-707a",
-                "S3Key": "serverless/todo-api/dev/1742932998596-2025-03-25T20:03:18.596Z/todo-api.zip"
+                "S3Key": "serverless/todo-api/dev/1742986996387-2025-03-26T11:03:16.387Z/todo-api.zip"
               },
               "Handler": "handler.createTodo",
               "Runtime": "nodejs16.x",
@@ -158,7 +161,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-eu-north-1-fa2e648b-707a",
-                "S3Key": "serverless/todo-api/dev/1742932998596-2025-03-25T20:03:18.596Z/todo-api.zip"
+                "S3Key": "serverless/todo-api/dev/1742986996387-2025-03-26T11:03:16.387Z/todo-api.zip"
               },
               "Handler": "handler.getTodos",
               "Runtime": "nodejs16.x",
@@ -181,7 +184,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-eu-north-1-fa2e648b-707a",
-                "S3Key": "serverless/todo-api/dev/1742932998596-2025-03-25T20:03:18.596Z/todo-api.zip"
+                "S3Key": "serverless/todo-api/dev/1742986996387-2025-03-26T11:03:16.387Z/todo-api.zip"
               },
               "Handler": "handler.updateTodo",
               "Runtime": "nodejs16.x",
@@ -204,7 +207,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "serverless-framework-deployments-eu-north-1-fa2e648b-707a",
-                "S3Key": "serverless/todo-api/dev/1742932998596-2025-03-25T20:03:18.596Z/todo-api.zip"
+                "S3Key": "serverless/todo-api/dev/1742986996387-2025-03-26T11:03:16.387Z/todo-api.zip"
               },
               "Handler": "handler.deleteTodo",
               "Runtime": "nodejs16.x",
@@ -222,44 +225,44 @@
               "DeleteTodoLogGroup"
             ]
           },
-          "CreateTodoLambdaVersionE5nKL3reVPNYaFTDGLcmwEiK6hetf25b2YFQdJwY0o": {
+          "CreateTodoLambdaVersion0SaT02npJizMvPWy00n5TzgFjy6EujrdOzFk1miaoTU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateTodoLambdaFunction"
               },
-              "CodeSha256": "Yc9SKhbwQa+JPjDwm0jWFEfaa+iOmWWkxNZkRcww7hY="
+              "CodeSha256": "6Go2HF4TzkrZVlb9BAFlJkEWl4XMAuzGZUgiYSPZnX0="
             }
           },
-          "GetTodosLambdaVersion6o39IJ3kfiPHGAGrapiopdBkQz1DPzpoHXRC09bme0k": {
+          "GetTodosLambdaVersions7ZlfYkmpxjYdk83zJDk3e7WYCZ8frh3P1ZYDY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetTodosLambdaFunction"
               },
-              "CodeSha256": "Yc9SKhbwQa+JPjDwm0jWFEfaa+iOmWWkxNZkRcww7hY="
+              "CodeSha256": "6Go2HF4TzkrZVlb9BAFlJkEWl4XMAuzGZUgiYSPZnX0="
             }
           },
-          "UpdateTodoLambdaVersionGfTdxjoqmATHRhQzy7DkuMzHYQOPnwi6YKRoenFpBw": {
+          "UpdateTodoLambdaVersiond2H9U9PnqiMNkCrhFzWYh81VcLF1QqIDAEE9J9WgZA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UpdateTodoLambdaFunction"
               },
-              "CodeSha256": "Yc9SKhbwQa+JPjDwm0jWFEfaa+iOmWWkxNZkRcww7hY="
+              "CodeSha256": "6Go2HF4TzkrZVlb9BAFlJkEWl4XMAuzGZUgiYSPZnX0="
             }
           },
-          "DeleteTodoLambdaVersionROOQyObeezsmApTZToLsaUusVsBjr4qMhKIQhvFoE": {
+          "DeleteTodoLambdaVersionbovyCb69P2sxuD7eCKp82MUvbOtqez0A2AZ15yRUCk": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "DeleteTodoLambdaFunction"
               },
-              "CodeSha256": "Yc9SKhbwQa+JPjDwm0jWFEfaa+iOmWWkxNZkRcww7hY="
+              "CodeSha256": "6Go2HF4TzkrZVlb9BAFlJkEWl4XMAuzGZUgiYSPZnX0="
             }
           },
           "ApiGatewayRestApi": {
@@ -296,6 +299,51 @@
                 "Ref": "ApiGatewayResourceTodos"
               },
               "PathPart": "{id}",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodTodosIdVarOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent,X-Amzn-Trace-Id'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": ""
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceTodosIdVar"
+              },
               "RestApiId": {
                 "Ref": "ApiGatewayRestApi"
               }
@@ -485,7 +533,7 @@
               "DeleteTodoLambdaPermissionApiGateway"
             ]
           },
-          "ApiGatewayDeployment1742932993819": {
+          "ApiGatewayDeployment1742986992160": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -494,6 +542,7 @@
               "StageName": "dev"
             },
             "DependsOn": [
+              "ApiGatewayMethodTodosIdVarOptions",
               "ApiGatewayMethodTodosPost",
               "ApiGatewayMethodTodosGet",
               "ApiGatewayMethodTodosIdVarPut",
@@ -659,7 +708,7 @@
           "CreateTodoLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateTodoLambdaVersionE5nKL3reVPNYaFTDGLcmwEiK6hetf25b2YFQdJwY0o"
+              "Ref": "CreateTodoLambdaVersion0SaT02npJizMvPWy00n5TzgFjy6EujrdOzFk1miaoTU"
             },
             "Export": {
               "Name": "sls-todo-api-dev-CreateTodoLambdaFunctionQualifiedArn"
@@ -668,7 +717,7 @@
           "GetTodosLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetTodosLambdaVersion6o39IJ3kfiPHGAGrapiopdBkQz1DPzpoHXRC09bme0k"
+              "Ref": "GetTodosLambdaVersions7ZlfYkmpxjYdk83zJDk3e7WYCZ8frh3P1ZYDY"
             },
             "Export": {
               "Name": "sls-todo-api-dev-GetTodosLambdaFunctionQualifiedArn"
@@ -677,7 +726,7 @@
           "UpdateTodoLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UpdateTodoLambdaVersionGfTdxjoqmATHRhQzy7DkuMzHYQOPnwi6YKRoenFpBw"
+              "Ref": "UpdateTodoLambdaVersiond2H9U9PnqiMNkCrhFzWYh81VcLF1QqIDAEE9J9WgZA"
             },
             "Export": {
               "Name": "sls-todo-api-dev-UpdateTodoLambdaFunctionQualifiedArn"
@@ -686,7 +735,7 @@
           "DeleteTodoLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "DeleteTodoLambdaVersionROOQyObeezsmApTZToLsaUusVsBjr4qMhKIQhvFoE"
+              "Ref": "DeleteTodoLambdaVersionbovyCb69P2sxuD7eCKp82MUvbOtqez0A2AZ15yRUCk"
             },
             "Export": {
               "Name": "sls-todo-api-dev-DeleteTodoLambdaFunctionQualifiedArn"
@@ -741,7 +790,7 @@
         "timeout": 6,
         "runtime": "nodejs16.x",
         "vpc": {},
-        "versionLogicalId": "CreateTodoLambdaVersionE5nKL3reVPNYaFTDGLcmwEiK6hetf25b2YFQdJwY0o"
+        "versionLogicalId": "CreateTodoLambdaVersion0SaT02npJizMvPWy00n5TzgFjy6EujrdOzFk1miaoTU"
       },
       "getTodos": {
         "handler": "handler.getTodos",
@@ -760,7 +809,7 @@
         "timeout": 6,
         "runtime": "nodejs16.x",
         "vpc": {},
-        "versionLogicalId": "GetTodosLambdaVersion6o39IJ3kfiPHGAGrapiopdBkQz1DPzpoHXRC09bme0k"
+        "versionLogicalId": "GetTodosLambdaVersions7ZlfYkmpxjYdk83zJDk3e7WYCZ8frh3P1ZYDY"
       },
       "updateTodo": {
         "handler": "handler.updateTodo",
@@ -779,7 +828,7 @@
         "timeout": 6,
         "runtime": "nodejs16.x",
         "vpc": {},
-        "versionLogicalId": "UpdateTodoLambdaVersionGfTdxjoqmATHRhQzy7DkuMzHYQOPnwi6YKRoenFpBw"
+        "versionLogicalId": "UpdateTodoLambdaVersiond2H9U9PnqiMNkCrhFzWYh81VcLF1QqIDAEE9J9WgZA"
       },
       "deleteTodo": {
         "handler": "handler.deleteTodo",
@@ -788,6 +837,23 @@
             "http": {
               "path": "todos/{id}",
               "method": "delete",
+              "cors": {
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "DELETE"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "allowCredentials": false
+              },
               "integration": "AWS_PROXY"
             }
           }
@@ -798,7 +864,7 @@
         "timeout": 6,
         "runtime": "nodejs16.x",
         "vpc": {},
-        "versionLogicalId": "DeleteTodoLambdaVersionROOQyObeezsmApTZToLsaUusVsBjr4qMhKIQhvFoE"
+        "versionLogicalId": "DeleteTodoLambdaVersionbovyCb69P2sxuD7eCKp82MUvbOtqez0A2AZ15yRUCk"
       }
     },
     "configValidationMode": "warn",
@@ -819,10 +885,10 @@
     "org": "fatfishdigitaltask",
     "orgId": null,
     "layers": {},
-    "artifact": "/Users/jasonbeedle/Desktop/Fat-Fish-Tech-Test/apps/backend/todo-api/.serverless/todo-api.zip"
+    "artifact": "/Users/jasonbeedle/Desktop/FatFishTechTest/Fat-Fish-Tech-Test/apps/backend/todo-api/.serverless/todo-api.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/todo-api/dev/1742932998596-2025-03-25T20:03:18.596Z",
+    "artifactDirectoryName": "serverless/todo-api/dev/1742986996387-2025-03-26T11:03:16.387Z",
     "artifact": "todo-api.zip"
   }
 }

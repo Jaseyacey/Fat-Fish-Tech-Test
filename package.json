@@ -6,7 +6,7 @@
   "scripts": {
     "test:mobile": "cd apps/mobile && jest",
     "test:backend": "cd apps/backend && jest",
-    "test:all": "npm run test:backend && npm run test:mobile"
+    "test:all": "npm run test:backend && npm run test:mobile --watch"
   },
   "repository": {
     "type": "git",

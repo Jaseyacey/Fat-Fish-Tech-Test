@@ -83,5 +83,32 @@ describe('TodoListScreen', () => {
     fireEvent.press(fabButton);
     expect(mockNavigation.navigate).toHaveBeenCalledWith('AddTodo');
   });
-  
+
+  it('should delete a todo when todo is pressed', async () => {
+      const mockTodos = [
+        { id: '1', title: 'Test Todo', completed: false },
+        { id: '2', title: 'Another Todo', completed: true },
+      ];
+      const deleteTodo = jest.fn();
+      jest.spyOn(useTodosHook, 'useTodos').mockReturnValue({
+        isLoading: false,
+        isError: false,
+        data: mockTodos,
+        error: null,
+        refetch: jest.fn(),
+        deleteTodo,
+      } as any);
+      const { getByText } = renderWithQueryClient(
+        <TodoListScreen navigation={mockNavigation} />
+      );
+      await waitFor(() => {
+        const testTodo = getByText('Test Todo');
+        fireEvent.press(testTodo);
+        expect(deleteTodo).toHaveBeenCalledWith('1');
+      });
+      await waitFor(() => {
+        expect(getByText('Test Todo')).toBeTruthy();
+      });
+    });
+    
 });
