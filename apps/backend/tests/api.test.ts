@@ -2,7 +2,7 @@ import * as AWS from 'aws-sdk';
 
 AWS.config.update({ region: 'eu-north-1' });
 
-import { createTodo, deleteTodo, getTodos } from '../todo-api/handler';
+import { createTodo, deleteTodo, getTodos, updateTodos } from '../todo-api/handler';
 
 describe('API Tests', () => {
   it('should create a new todo', async () => {
@@ -37,7 +37,6 @@ describe('API Tests', () => {
     };
 
     const deleteResult = await deleteTodo(event);
-    console.log('Delete Todo Result:', deleteResult);
     expect(deleteResult.statusCode).toBe(200);
     expect(JSON.parse(deleteResult.body).message).toBe('Todo deleted successfully!');
   });
