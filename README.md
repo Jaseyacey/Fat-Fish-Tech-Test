@@ -1,5 +1,5 @@
 # Fat-Fish-Tech-Test
-A Full Stack tech test for Fat Fish Digital Agency
+A Full Stack tech test for the Fat Fish Digital Agency
 
 ## Project Overview
 This is a CRUD (Create, Read, Update, Delete) application demonstrating modern full-stack development practices. The project showcases expertise in building scalable, maintainable, and performant applications using industry-standard technologies.
@@ -8,30 +8,35 @@ This is a CRUD (Create, Read, Update, Delete) application demonstrating modern f
 
 ### Frontend
 - **React Native (Expo)**: For cross-platform mobile application development
-- **Redux**: State management
+- **Redux**: For local state management
 - **TanStack Query**: Server state management and data fetching
-- **Styled Components**: Styling and theming
 - **TypeScript**: Type-safe development
 - **React Testing Library**: Testing utilities
 
 ### Backend
 - **NodeJS**: Runtime environment
 - **TypeScript**: Type-safe development
-- **Serverless**: Cloud-native architecture
-- **AWS**: Cloud infrastructure and services
+- **Serverless Framework**: Cloud-native architecture
+- **AWS Lambda**: Serverless compute
+- **DynamoDB**: NoSQL database
+- **API Gateway**: REST API management
 
 ## Project Structure
-This project follows a monorepo structure, which is ideal for this small-scale application. The monorepo approach offers several benefits:
-- Simplified dependency management
-- Easier code sharing between frontend and backend
-- Streamlined development workflow
-- Unified versioning
-
-For larger-scale applications, separate repositories would be recommended to allow for:
-- Independent deployment cycles
-- Separate team management
-- Independent scaling
-- More granular access control
+```
+Fat-Fish-Tech-Test/
+├── apps/
+│   ├── mobile/           # React Native mobile app
+│   │   ├── src/
+│   │   │   ├── api/     # API integration
+│   │   │   ├── hooks/   # Custom React hooks
+│   │   │   ├── screens/ # App screens
+│   │   │   └── types/   # TypeScript types
+│   │   └── tests/       # Frontend tests
+│   └── backend/         # Serverless backend
+│       ├── todo-api/    # Todo API Lambda functions
+│       └── tests/       # Backend tests
+└── package.json
+```
 
 ## Getting Started
 
@@ -42,9 +47,10 @@ For larger-scale applications, separate repositories would be recommended to all
 - Expo CLI
 
 ### Installation
+
 1. Clone the repository
 ```bash
-git clone [repository-url]
+git clone [https://github.com/Jaseyacey/Fat-Fish-Tech-Test]
 ```
 
 2. Install dependencies
@@ -58,35 +64,58 @@ yarn install
 ```bash
 cp .env.example .env
 ```
+The API endpoint will be provided separately.
 
 4. Start the development server
 ```bash
-npm run dev
-# or
-yarn dev
+# Start the mobile app
+cd apps/mobile
+npm run ios     # For iOS
+npm run android # For Android
 ```
 
 ## Features
-- User authentication and authorisation
-- CRUD operations for resources
-- Real-time updates
-- Responsive design
-- Type-safe development
-- Comprehensive testing
-
-## Architecture
-The application follows a clean architecture pattern with:
-- Clear separation of concerns
-- Modular components
-- Scalable folder structure
-- Type-safe interfaces
-- Comprehensive error handling
+- Create, read, update, and delete todos
+- Real-time updates using TanStack Query
+- Optimistic updates for better UX
+- Type-safe development with TypeScript
+- Comprehensive test coverage
+- Clean and modern UI design
 
 ## Testing
-- Unit tests with Jest
-- Integration tests with React Testing Library
-- E2E tests with Detox
+
+### Running Tests
+```bash
+# Run all tests
+npm run tests:all
+
+# Run frontend tests only
+cd apps/mobile
+npm test
+
+# Run backend tests only
+cd apps/backend
+npm test
+```
+
+### Test Coverage
+- Unit tests for API functions
+- Integration tests for React components
+- End-to-end tests for critical user flows
+
+## Architecture
+
+### Frontend Architecture
+- Clean component structure
+- Custom hooks for data fetching
+- Type-safe API integration
+- Responsive design patterns
+
+### Backend Architecture
+- Serverless functions for each operation
+- DynamoDB for data storage
+- API Gateway for REST endpoints
+- TypeScript for type safety
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
-
