@@ -1,66 +1,60 @@
-import React from 'react';
-import { render, fireEvent, waitFor } from '@testing-library/react-native';
-import AddTodoScreen from '../AddTodoScreen';
-import * as useTodosHook from '../../hooks/useTodos';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import axios from 'axios';
+import {
+  fetchTodos,
+  createTodo,
+  updateTodo,
+  deleteTodo,
+} from '../../api/todoApi';
+import { Todo } from '../../types/todo';
+import { API_URL_ENDPOINT } from '@env';
 
-const renderWithQueryClient = (ui: React.ReactElement) => {
-  const queryClient = new QueryClient();
-  return render(
-    <QueryClientProvider client={queryClient}>
-      {ui}
-    </QueryClientProvider>
-  );
-};
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
 
-describe('AddTodoScreen', () => {
-  const mockMutate = jest.fn();
-
+describe('todoApi', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-
-    jest.spyOn(useTodosHook, 'useCreateTodoMutation').mockReturnValue({
-      mutate: mockMutate,
-      isPending: false,
-    } as any);
   });
 
-  it('disables button when input is empty', () => {
-    const { getByRole } = renderWithQueryClient(<AddTodoScreen />);
-    const button = getByRole('button');
-    expect(button.props.accessibilityState.disabled).toBe(true);
+  it('fetches todos', async () => {
+    const mockTodos: Todo[] = [
+      { id: '1', title: 'Test Todo', completed: false },
+    ];
+
+    mockedAxios.get.mockResolvedValueOnce({ data: mockTodos });
+
+    const result = await fetchTodos();
+    expect(result).toEqual(mockTodos);
+    expect(mockedAxios.get).toHaveBeenCalledWith(API_URL_ENDPOINT);
   });
 
-  it('enables button when input has text and calls createTodo', async () => {
-    const { getByPlaceholderText, getByText } = renderWithQueryClient(<AddTodoScreen />);
-    const input = getByPlaceholderText('Enter a todo...');
-    const button = getByText('Add Todo');
+  it('creates a todo', async () => {
+    const newTodo = { title: 'New Todo', completed: false };
+    const created = { id: '2', ...newTodo };
 
-    fireEvent.changeText(input, 'Buy milk');
-    fireEvent.press(button);
+    mockedAxios.post.mockResolvedValueOnce({ data: created });
 
-    expect(mockMutate).toHaveBeenCalledWith(
-      { title: 'Buy milk', completed: false },
-      expect.any(Object)
-    );
+    const result = await createTodo(newTodo);
+    expect(result).toEqual(created);
+    expect(mockedAxios.post).toHaveBeenCalledWith(API_URL_ENDPOINT, newTodo);
   });
 
-  it('clears input on success', async () => {
-    let onSuccess: () => void = () => {};
-    mockMutate.mockImplementation((_todo, opts) => {
-      onSuccess = opts.onSuccess;
-    });
+  it('updates a todo', async () => {
+    const updated: Todo = { id: '1', title: 'Updated', completed: true };
 
-    const { getByPlaceholderText, getByText } = renderWithQueryClient(<AddTodoScreen />);
-    const input = getByPlaceholderText('Enter a todo...');
+    mockedAxios.put.mockResolvedValueOnce({ data: updated });
 
-    fireEvent.changeText(input, 'Walk Bailey');
-    fireEvent.press(getByText('Add Todo'));
+    const result = await updateTodo(updated);
+    expect(result).toEqual(updated);
+    expect(mockedAxios.put).toHaveBeenCalledWith(`${API_URL_ENDPOINT}/${updated.id}`, updated);
+  });
+  
+  it('deletes a todo', async () => {
+    const id = '1';
 
-    await waitFor(() => {
-      onSuccess();
-    });
+    mockedAxios.delete.mockResolvedValueOnce({});
 
-    expect(input.props.value).toBe('');
+    await deleteTodo(id);
+    expect(mockedAxios.delete).toHaveBeenCalledWith(`${API_URL_ENDPOINT}/${id}`);
   });
 });

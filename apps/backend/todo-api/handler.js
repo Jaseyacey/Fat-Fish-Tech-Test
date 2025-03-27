@@ -16,12 +16,10 @@ export const createTodo = async (event) => {
       TableName: 'Todos',
       Item: newTodo,
     };
-    console.log('Inserting new todo:', newTodo);
 
     const command = new PutItemCommand(params);
     await dynamoDBClient.send(command);
 
-    console.log("Todo inserted:", newTodo);
 
     return {
       statusCode: 201,
@@ -72,7 +70,6 @@ export const getTodos = async () => {
 // Delete Todo
 export const deleteTodo = async (event) => {
   const todoId = event.pathParameters.id;
-  console.log('Deleting todo with ID:', todoId);
 
   try {
     const params = {
@@ -83,7 +80,6 @@ export const deleteTodo = async (event) => {
     const command = new DeleteItemCommand(params);
     await dynamoDBClient.send(command);
 
-    console.log('Todo deleted successfully:', todoId);
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -106,7 +102,6 @@ export const deleteTodo = async (event) => {
 export const updateTodos = async (event) => {
   const todoId = event.pathParameters.id;
   const updatedTodo = JSON.parse(event.body);
-  console.log('Updating todo with ID:', todoId);
 
   try {
     const params = {
@@ -123,7 +118,6 @@ export const updateTodos = async (event) => {
     const command = new UpdateItemCommand(params); 
     await dynamoDBClient.send(command);
 
-    console.log('Todo updated successfully:', todoId);
     return {
       statusCode: 200,
       body: JSON.stringify({
