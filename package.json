@@ -24,11 +24,14 @@
     "apps/*"
   ],
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.775.0",
     "aws-sdk": "^2.1692.0",
     "react-native-dotenv": "^3.4.11"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
+    "@babel/preset-typescript": "^7.27.0",
+    "@types/aws-lambda": "^8.10.148",
     "@types/jest": "^29.5.14",
     "@types/react-native-dotenv": "^0.2.2",
     "babel-jest": "^29.7.0",

@@ -26,7 +26,6 @@ export const updateTodo = async (updatedTodo: Todo): Promise<Todo> => {
     body: JSON.stringify(updatedTodo),
   });
   if (!response.ok) throw new Error('Failed to update todo');
-  console.log('updatedTodo', updatedTodo);
   return response.json();
 };
 

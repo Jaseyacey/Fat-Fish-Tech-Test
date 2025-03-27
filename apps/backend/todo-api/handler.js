@@ -1,23 +1,26 @@
-const AWS = require('aws-sdk');
-const dynamoDB = new AWS.DynamoDB.DocumentClient();
+import { DynamoDBClient, PutItemCommand, ScanCommand, DeleteItemCommand } from '@aws-sdk/client-dynamodb';
+
+const dynamoDBClient = new DynamoDBClient({ region: 'eu-north-1' });
 
 // Create Todo
-module.exports.createTodo = async (event) => {
+export const createTodo = async (event) => {
   try {
     const todo = JSON.parse(event.body);
-    // Define newTodo with an id
     const newTodo = {
-      id: Date.now().toString(),
-      title: todo.title,
-      completed: todo.completed || false,
+      id: { S: Date.now().toString() },
+      title: { S: todo.title },
+      completed: { BOOL: todo.completed || false },
     };
 
-    // DynamoDB insertion
-    await dynamoDB.put({
+    const params = {
       TableName: 'Todos',
       Item: newTodo,
-    }).promise();
-    
+    };
+    console.log('Inserting new todo:', newTodo);
+
+    const command = new PutItemCommand(params);
+    await dynamoDBClient.send(command);
+
     console.log("Todo inserted:", newTodo);
 
     return {
@@ -28,7 +31,7 @@ module.exports.createTodo = async (event) => {
       }),
     };
   } catch (error) {
-    console.error('Error creating todo🍎🍎:', error);
+    console.error('Error creating todo:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: 'Internal Server Error', error: error.message }),
@@ -37,13 +40,21 @@ module.exports.createTodo = async (event) => {
 };
 
 // Get Todos
-module.exports.getTodos = async () => {
+export const getTodos = async () => {
   try {
-    const result = await dynamoDB
-      .scan({
-        TableName: 'Todos',
-      })
-      .promise();
+    const params = {
+      TableName: 'Todos',
+    };
+
+    const command = new ScanCommand(params);
+    const result = await dynamoDBClient.send(command);
+
+    if (!result.Items || result.Items.length === 0) {
+      return {
+        statusCode: 200,
+        body: JSON.stringify({ message: 'No todos found' }),
+      };
+    }
 
     return {
       statusCode: 200,
@@ -58,18 +69,19 @@ module.exports.getTodos = async () => {
   }
 };
 
-//Delete Todo
-module.exports.deleteTodo = async (event) => {
+// Delete Todo
+export const deleteTodo = async (event) => {
   const todoId = event.pathParameters.id;
   console.log('Deleting todo with ID:', todoId);
 
   try {
-    await dynamoDB
-      .delete({
-        TableName: 'Todos',
-        Key: { id: todoId },
-      })
-      .promise();
+    const params = {
+      TableName: 'Todos',
+      Key: { id: todoId },
+    };
+
+    const command = new DeleteItemCommand(params);
+    await dynamoDBClient.send(command);
 
     console.log('Todo deleted successfully:', todoId);
     return {
@@ -90,24 +102,26 @@ module.exports.deleteTodo = async (event) => {
   }
 };
 
-// Update Todo
-module.exports.updateTodo = async (event) => {
+// Update Todos
+export const updateTodos = async (event) => {
   const todoId = event.pathParameters.id;
-  const todo = JSON.parse(event.body);
+  const updatedTodo = JSON.parse(event.body);
+  console.log('Updating todo with ID:', todoId);
 
   try {
-    await dynamoDB
-      .update({
-        TableName: 'Todos',
-        Key: { id: todoId },
-        UpdateExpression: 'set title = :title, completed = :completed',
-        ExpressionAttributeValues: {
-          ':title': todo.title,
-          ':completed': todo.completed,
-        },
-        ReturnValues: 'UPDATED_NEW',
-      })
-      .promise();
+    const params = {
+      TableName: 'Todos',
+      Key: { id: { S: todoId } }, 
+      UpdateExpression: 'SET title = :title, completed = :completed',
+      ExpressionAttributeValues: {
+        ':title': { S: updatedTodo.title }, 
+        ':completed': { BOOL: updatedTodo.completed },
+      },
+      ReturnValues: 'UPDATED_NEW',
+    };
+
+    const command = new UpdateItemCommand(params); 
+    await dynamoDBClient.send(command);
 
     console.log('Todo updated successfully:', todoId);
     return {
