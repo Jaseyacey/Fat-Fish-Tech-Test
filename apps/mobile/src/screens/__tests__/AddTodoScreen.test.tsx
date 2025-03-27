@@ -14,14 +14,14 @@ const renderWithQueryClient = (ui: React.ReactElement) => {
 };
 
 describe('AddTodoScreen', () => {
-  const mockCreateTodo = jest.fn();
+  const mockMutate = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    jest.spyOn(useTodosHook, 'useTodos').mockReturnValue({
-      createTodo: mockCreateTodo,
-      creating: false,
+    jest.spyOn(useTodosHook, 'useCreateTodoMutation').mockReturnValue({
+      mutate: mockMutate,
+      isPending: false,
     } as any);
   });
 
@@ -39,7 +39,7 @@ describe('AddTodoScreen', () => {
     fireEvent.changeText(input, 'Buy milk');
     fireEvent.press(button);
 
-    expect(mockCreateTodo).toHaveBeenCalledWith(
+    expect(mockMutate).toHaveBeenCalledWith(
       { title: 'Buy milk', completed: false },
       expect.any(Object)
     );
@@ -47,7 +47,7 @@ describe('AddTodoScreen', () => {
 
   it('clears input on success', async () => {
     let onSuccess: () => void = () => {};
-    mockCreateTodo.mockImplementation((_todo, opts) => {
+    mockMutate.mockImplementation((_todo, opts) => {
       onSuccess = opts.onSuccess;
     });
 

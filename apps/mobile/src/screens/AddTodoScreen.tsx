@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, KeyboardAvoidingView, Platform } from 'react-native';
-import { useTodos } from '../hooks/useTodos';
+import { TextInput, Button, StyleSheet, Alert, KeyboardAvoidingView, Platform, View } from 'react-native';
+import { useCreateTodoMutation } from '../hooks/useTodos';
 
 const AddTodoScreen = () => {
   const [title, setTitle] = useState('');
-  const { createTodo, creating } = useTodos();
+  const { mutate: createTodo, isPending: creating } = useCreateTodoMutation();
 
   const handleAdd = () => {
     if (!title.trim()) return;
 
+    const todoTitle = title.trim();
+    setTitle('');
+
     createTodo(
-      { title, completed: false },
+      { title: todoTitle, completed: false },
       {
         onSuccess: () => {
-          setTitle('');
+          console.log('Todo added successfully', todoTitle);
         },
         onError: () => {
           Alert.alert('Error', 'Failed to add todo');
@@ -33,24 +36,45 @@ const AddTodoScreen = () => {
         placeholder="Enter a todo..."
         style={styles.input}
       />
-      <Button title={creating ? 'Adding...' : 'Add Todo'} onPress={handleAdd} disabled={creating || !title.trim()} />
+      <View style={[styles.button, (!title.trim() || creating) && styles.buttonDisabled]}>
+        <Button 
+          title={creating ? 'Adding...' : 'Add Todo'} 
+          onPress={handleAdd} 
+          disabled={creating || !title.trim()}
+          color={(!title.trim() || creating) ? '#007bff' : '#fff'}
+        />
+      </View>
     </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    gap: 12,
-    backgroundColor: '#fff',
     flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+    backgroundColor: '#f0f0f0',
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    padding: 12,
-    fontSize: 16,
+    borderColor: '#ddd',
+    padding: 10,
+    borderRadius: 25,
+    height: 50,
+    marginBottom: 20,
+    backgroundColor: '#fff',
+  },
+  button: {
+    marginTop: 10,
+    width: '100%',
+    borderRadius: 25,
+    backgroundColor: '#007bff',
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonDisabled: {
+    backgroundColor: '#fff',
   },
 });
 

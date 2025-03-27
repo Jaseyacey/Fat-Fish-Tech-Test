@@ -1,41 +1,26 @@
 import React from 'react';
 import { View, Text, FlatList, ActivityIndicator, TouchableOpacity, StyleSheet, Button } from 'react-native';
-import { useTodos } from '../hooks/useTodos';
+import { useTodos, useUpdateTodoMutation, useDeleteTodoMutation } from '../hooks/useTodos';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
-import { queryClient } from '../api/queryClient';
 
 type TodoListScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'TodoList'>;
 };
 
 const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
-  const { data: todos, isLoading, isError, deleteTodo, updateTodo } = useTodos();
+  const { data: todos, isLoading, isError } = useTodos();
+  const { mutate: updateTodo } = useUpdateTodoMutation();
+  const { mutate: deleteTodo } = useDeleteTodoMutation();
 
   const handleDelete = (id: string) => {
-    const currentTodos = (todos || []).filter(todo => todo.id !== id);
-    queryClient.setQueryData(['todos'], currentTodos);
-    try {
-      deleteTodo(id); 
-    } catch (error) {
-      console.error('Failed to delete todo', error);
-    }
+    deleteTodo(id);
   };
 
   const handleToggleComplete = (id: string, currentStatus: boolean) => {
-    const updatedTodos = todos?.map(todo =>
-      todo.id === id ? { ...todo, completed: !currentStatus } : todo
-    );
-
-    queryClient.setQueryData(['todos'], updatedTodos);
-
-    try {
-      const currentTodo = todos?.find(todo => todo.id === id);
-      if (currentTodo) {
-        updateTodo({ ...currentTodo, completed: !currentStatus });
-      }
-    } catch (error) {
-      console.error('Failed to update todo status', error);
+    const currentTodo = todos?.find(todo => todo.id === id);
+    if (currentTodo) {
+      updateTodo({ ...currentTodo, completed: !currentStatus });
     }
   };
 
@@ -58,51 +43,87 @@ const TodoListScreen = ({ navigation }: TodoListScreenProps) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <FlatList
         data={todos}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={{ padding: 16 }}
         renderItem={({ item }) => (
-          <View
-            style={{
-              padding: 12,
-              backgroundColor: '#f4f4f4',
-              marginBottom: 8,
-              borderRadius: 8,
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <TouchableOpacity onPress={() => handleToggleComplete(item.id, item.completed)} style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontSize: 16, marginRight: 10 }}>{item.title}</Text>
-              <Text style={{ color: item.completed ? 'green' : 'red' }}>
-                {item.completed ? 'Done' : 'Not done'}
+          <View style={styles.todoItem}>
+            <TouchableOpacity
+              style={styles.todoContent}
+              onPress={() => handleToggleComplete(item.id, item.completed)}
+            >
+              <Text style={[styles.todoText, item.completed && styles.completedTodo]}>
+                {item.title}
+              </Text>
+              <Text style={[styles.statusText, item.completed ? styles.doneText : styles.notDoneText]}>
+                {item.completed ? '✅' : '❌'}
               </Text>
             </TouchableOpacity>
-
-            <TouchableOpacity testID='DeleteItemButton' onPress={() => handleDelete(item.id)}>
-              <Text style={{ fontSize: 24, color: 'red' }}>🗑️</Text>
+            <TouchableOpacity
+              onPress={() => handleDelete(item.id)}
+              style={styles.deleteButton}
+            >
+              <Text style={styles.deleteButtonText}>🗑️</Text>
             </TouchableOpacity>
           </View>
         )}
       />
-      <TouchableOpacity 
-        style={styles.fab}
+      <TouchableOpacity
+        style={styles.addButton}
         onPress={() => navigation.navigate('AddTodo')}
       >
-        <Text style={styles.fabText}>+</Text>
+        <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  fab: {
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  todoItem: {
+    flexDirection: 'row',
+    padding: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    alignItems: 'center',
+  },
+  todoContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  todoText: {
+    flex: 1,
+    fontSize: 16,
+  },
+  completedTodo: {
+    textDecorationLine: 'line-through',
+    color: '#888',
+  },
+  statusText: {
+    marginLeft: 10,
+    fontSize: 14,
+  },
+  doneText: {
+    color: 'green',
+  },
+  notDoneText: {
+    color: 'red',
+  },
+  deleteButton: {
+    padding: 8,
+  },
+  deleteButtonText: {
+    fontSize: 20,
+  },
+  addButton: {
     position: 'absolute',
-    right: 16,
-    bottom: 16,
+    right: 20,
+    bottom: 20,
     width: 56,
     height: 56,
     borderRadius: 28,
@@ -115,7 +136,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
   },
-  fabText: {
+  addButtonText: {
     fontSize: 24,
     color: '#fff',
   },
