@@ -10,34 +10,40 @@ export const useTodos = () => {
     queryFn: fetchTodos,
   });
 
-  const createTodoMutation = useMutation({
+  return {
+    ...todosQuery,
+  };
+};
+
+export const useCreateTodoMutation = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
     mutationFn: createTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
   });
+};
 
-  const updateTodoMutation = useMutation({
+export const useUpdateTodoMutation = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
     mutationFn: updateTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
   });
+};
 
-  const deleteTodoMutation = useMutation({
+export const useDeleteTodoMutation = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
     mutationFn: deleteTodo,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['todos'] });
     },
   });
-
-  return {
-    ...todosQuery,
-    createTodo: createTodoMutation.mutate,
-    updateTodo: updateTodoMutation.mutate,
-    deleteTodo: deleteTodoMutation.mutate,
-    creating: createTodoMutation.isPending,
-    updating: updateTodoMutation.isPending,
-    deleting: deleteTodoMutation.isPending,
-  };
 };
