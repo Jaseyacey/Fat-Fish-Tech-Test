@@ -15,9 +15,6 @@ const AddTodoScreen = () => {
     createTodo(
       { title: todoTitle, completed: false },
       {
-        onSuccess: () => {
-          console.log('Todo added successfully', todoTitle);
-        },
         onError: () => {
           Alert.alert('Error', 'Failed to add todo');
         },

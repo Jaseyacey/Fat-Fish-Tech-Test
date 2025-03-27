@@ -1,37 +1,24 @@
 import { Todo } from '../types/todo';
 import { API_URL_ENDPOINT } from '@env';
+import axios from 'axios';
 
 const apiUrl = API_URL_ENDPOINT;
-// console.log('apiUrl' );
+
 export const fetchTodos = async (): Promise<Todo[]> => {
-  const response = await fetch(apiUrl);
-  if (!response.ok) throw new Error('Failed to fetch todos');
-  return response.json();
+    const response = await axios.get(apiUrl);
+    return response.data;
 };
 
 export const createTodo = async (newTodo: Omit<Todo, 'id'>): Promise<Todo> => {
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(newTodo),
-  });
-  if (!response.ok) throw new Error('Failed to create todo');
-  return response.json();
+  const response = await axios.post(apiUrl, newTodo);
+  return response.data;
 };
 
 export const updateTodo = async (updatedTodo: Todo): Promise<Todo> => {
-  const response = await fetch(`${apiUrl}/${updatedTodo.id}`, {
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(updatedTodo),
-  });
-  if (!response.ok) throw new Error('Failed to update todo');
-  return response.json();
+  const response = await axios.put(`${apiUrl}/${updatedTodo.id}`, updatedTodo);
+  return response.data;
 };
 
 export const deleteTodo = async (id: string): Promise<void> => {
-  const response = await fetch(`${apiUrl}/${id}`, {
-    method: 'DELETE',
-  });
-  if (!response.ok) throw new Error('Failed to delete todo');
+  await axios.delete(`${apiUrl}/${id}`);
 };
