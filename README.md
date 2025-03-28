@@ -66,15 +66,17 @@ cd apps/backend && npm test # Backend only
 git clone https://github.com/Jaseyacey/Fat-Fish-Tech-Test
 cd Fat-Fish-Tech-Test
 yarn install
+cd apps/mobile
+yarn install
 cp .env.example .env
 
-The API_URL will be sent by email
+The API_URL can be retreived by running serverlessdeploy in backend/todo-api
 ```
 
 Start mobile app:
 ```bash
 cd apps/mobile
-yarn ios     # or yarn android
+yarn run ios     # or yarn run android
 ```
 
 ## Improvements (if time allowed)
