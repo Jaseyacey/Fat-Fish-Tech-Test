@@ -99,7 +99,8 @@ npm test
 ```
 ### Screenshots
 
-## Application Screenshots
+### Tests Passing
+<img src="images/Screenshot 2025-03-27 at 15.54.36.png" alt="Application Architecture"  width="500" />
 
 ### Mobile App Screenshots
 <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
@@ -109,8 +110,6 @@ npm test
   <img src="images/Simulator Screenshot - iPhone 16 - 2025-03-28 at 09.03.55.png" alt="Delete Todo Screen" width="300" />
 </div>
 
-### Tests Passing Screenshots
-<img src="images/Screenshot 2025-03-27 at 15.54.36.png" alt="Application Architecture" style="max-width: 100%; height: auto;" />
 
 ### Test Coverage
 - Unit tests for API functions
