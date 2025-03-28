@@ -97,6 +97,20 @@ npm test
 cd apps/backend
 npm test
 ```
+### Screenshots
+
+## Application Screenshots
+
+### Mobile App Screenshots
+<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+  <img src="images/Simulator Screenshot - iPhone 16 - 2025-03-28 at 09.03.14.png" alt="Todo List Screen" width="300" />
+  <img src="images/Simulator Screenshot - iPhone 16 - 2025-03-28 at 09.03.30.png" alt="Add Todo Screen" width="300" />
+  <img src="images/Simulator Screenshot - iPhone 16 - 2025-03-28 at 09.03.44.png" alt="Edit Todo Screen" width="300" />
+  <img src="images/Simulator Screenshot - iPhone 16 - 2025-03-28 at 09.03.55.png" alt="Delete Todo Screen" width="300" />
+</div>
+
+### Tests Passing Screenshots
+<img src="images/Screenshot 2025-03-27 at 15.54.36.png" alt="Application Architecture" style="max-width: 100%; height: auto;" />
 
 ### Test Coverage
 - Unit tests for API functions

@@ -106,7 +106,7 @@ export const updateTodos = async (event) => {
   try {
     const params = {
       TableName: 'Todos',
-      Key: { id: { S: todoId } }, 
+      Key: { id: { S: todoId } },   
       UpdateExpression: 'SET title = :title, completed = :completed',
       ExpressionAttributeValues: {
         ':title': { S: updatedTodo.title }, 
