@@ -1,4 +1,5 @@
 import * as AWS from 'aws-sdk';
+import { APIGatewayProxyEvent } from 'aws-lambda';
 
 AWS.config.update({ region: 'eu-north-1' });
 
@@ -6,12 +7,23 @@ import { createTodo, deleteTodo, getTodos, updateTodos } from '../todo-api/handl
 
 describe('API Tests', () => {
   it('should create a new todo', async () => {
-    const event = {
+    const event: APIGatewayProxyEvent = {
       body: JSON.stringify({ title: 'Test Todo', completed: false }),
+      headers: {},
+      multiValueHeaders: {},
+      httpMethod: 'POST',
+      isBase64Encoded: false,
+      path: '/todos',
+      pathParameters: null,
+      queryStringParameters: null,
+      multiValueQueryStringParameters: null,
+      stageVariables: null,
+      requestContext: {} as any,
+      resource: ''
     };
 
     const result = await createTodo(event);
-    expect(result.statusCode).toBe(201); 
+    expect(result.statusCode).toBe(201);
     expect(JSON.parse(result.body).message).toBe('Todo created successfully!');
   });
 
@@ -27,11 +39,23 @@ describe('API Tests', () => {
     const result = await getTodos();
     const todos = JSON.parse(result.body);
     const todo = todos[0];
+    const todoId = todo.id.S;
 
-    const event = {
+    const event: APIGatewayProxyEvent = {
+      body: null,
+      headers: {},
+      multiValueHeaders: {},
+      httpMethod: 'DELETE',
+      isBase64Encoded: false,
+      path: `/todos/${todoId}`,
       pathParameters: {
-        id: todo.id,
+        id: todoId,
       },
+      queryStringParameters: null,
+      multiValueQueryStringParameters: null,
+      stageVariables: null,
+      requestContext: {} as any,
+      resource: ''
     };
 
     const deleteResult = await deleteTodo(event);

@@ -17,32 +17,51 @@ import {
     });
 
     it('fetches todos', async () => {
-      const mockTodos: Todo[] = [
-        { id: '1', title: 'Test Todo', completed: false },
+      const mockDynamoDBTodos = [
+        {
+          id: { S: '1' },
+          title: { S: 'Test Todo' },
+          completed: { BOOL: false }
+        }
       ];
   
-      mockedAxios.get.mockResolvedValueOnce({ data: mockTodos });
+      mockedAxios.get.mockResolvedValueOnce({ data: mockDynamoDBTodos });
   
       const result = await fetchTodos();
-      expect(result).toEqual(mockTodos);
+      expect(result).toEqual([
+        { id: '1', title: 'Test Todo', completed: false }
+      ]);
       expect(mockedAxios.get).toHaveBeenCalledWith(API_URL_ENDPOINT);
     });
   
     it('creates a todo', async () => {
       const newTodo = { title: 'New Todo', completed: false };
-      const created = { id: '2', ...newTodo };
+      const mockDynamoDBTodo = {
+        id: { S: '2' },
+        title: { S: 'New Todo' },
+        completed: { BOOL: false }
+      };
   
-      mockedAxios.post.mockResolvedValueOnce({ data: created });
+      mockedAxios.post.mockResolvedValueOnce({ data: { todo: mockDynamoDBTodo } });
   
       const result = await createTodo(newTodo);
-      expect(result).toEqual(created);
+      expect(result).toEqual({
+        id: '2',
+        title: 'New Todo',
+        completed: false
+      });
       expect(mockedAxios.post).toHaveBeenCalledWith(API_URL_ENDPOINT, newTodo);
     });
   
     it('updates a todo', async () => {
       const updated: Todo = { id: '1', title: 'Updated', completed: true };
+      const mockDynamoDBTodo = {
+        id: { S: '1' },
+        title: { S: 'Updated' },
+        completed: { BOOL: true }
+      };
   
-      mockedAxios.put.mockResolvedValueOnce({ data: updated });
+      mockedAxios.put.mockResolvedValueOnce({ data: mockDynamoDBTodo });
   
       const result = await updateTodo(updated);
       expect(result).toEqual(updated);
